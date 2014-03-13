@@ -1,0 +1,143 @@
+#!/bin/bash
+
+# This script performs a backup of the specified
+# system logical volume to a backup logical volume
+# located on a separate physical volume.
+# It uses an LVM snapshot to ensure the data
+# remains consistent during the backup.
+
+BACKUP_VOLUME=$1
+BACKUP_MOUNT=$2
+BACKUP_SIZE=$3
+BUFFER_SIZE=$4
+ 
+BACKUP_DEVICE="${BACKUP_VOLUME}"
+BACKUP_RW_MOUNT="${BACKUP_MOUNT}/${BACKUP_VOLUME}_rw"
+BACKUP_RO_MOUNT="${BACKUP_MOUNT}/${BACKUP_VOLUME}"
+SNAPSHOT_NAME="${BACKUP_VOLUME}_snapshot"
+SNAPSHOT_DEVICE="${SNAPSHOT_NAME}"
+SNAPSHOT_MOUNT="${BACKUP_MOUNT}/${SNAPSHOT_NAME}"
+
+### First check everything was left cleanly last time, and fix if not
+#
+# If the snapshot mountpoint still exists try unmounting and removing it
+#
+if [ -d ${SNAPSHOT_MOUNT} ] ; then
+umount ${SNAPSHOT_MOUNT}
+rmdir ${SNAPSHOT_MOUNT}
+fi
+#
+# If the snapshot logical volume still exists, remove it
+#
+lvdisplay system | grep "LV Name" | grep -q /dev/system/system_var_snapshot
+if [ $? = 0 ]; then
+lvremove -f ${SNAPSHOT_DEVICE}  
+fi
+
+### Create a logical volume to snapshot the system volume
+#
+# This is created every time. The volume is deleted at the end of the
+# backup as it is not necessary to keep it, wastes space and
+# cpu and will freeze when full.
+#
+# The size of this volume needs to be large enough to contain
+# any changes which may happen on the original volume during
+# the course of the backup.  For example, with a size of 592M,
+# if a 1G file is written the snapshot volume may be frozen!
+# To avoid this make size big enough to cope, execute only in
+# quiet times (early hours) and make sure this script completes
+# gracefully if a frozen snapshot is encountered.
+#
+lvcreate -L${BUFFER_SIZE} -s -n ${SNAPSHOT_NAME} /dev/system/${BACKUP_VOLUME}
+
+### Create the backup logical volume
+#
+# This will only usually be necessary on the first run of this
+# script, unless for some reason the backup itself has been lost!
+#
+# The size of the backup volume must be large enough to contain
+# the contents of the original volume and any changes which have
+# occurred over the length of time for which backups are kept.
+# It may therefore be necessary to extend the backup volume manually.
+#
+if [ ! -h ${BACKUP_DEVICE} ] ; then
+lvcreate -L${BACKUP_SIZE} -n ${BACKUP_VOLUME} backup
+mkfs.xfs /dev/backup/${BACKUP_VOLUME}
+fi
+
+### Create the backup mount directory if necessary
+#
+if [ ! -d ${BACKUP_MOUNT} ] ; then
+mkdir ${BACKUP_MOUNT}
+fi
+
+### Create the snapshot mount-point
+#
+if [ ! -d ${SNAPSHOT_MOUNT} ] ; then
+mkdir ${SNAPSHOT_MOUNT}
+fi
+
+### Protect the snapshot mount-point
+#
+chmod go-rwx ${SNAPSHOT_MOUNT}
+
+### Mount the snapshot read-only
+#
+mount -o nouuid,ro ${SNAPSHOT_DEVICE} ${SNAPSHOT_MOUNT}
+
+./make_backup_rw ${BACKUP_VOLUME} ${BACKUP_MOUNT} || exit 1
+
+### Delete the oldest daily backup, if it exists
+#
+if [ -d ${BACKUP_RW_MOUNT}/daily.3 ] ; then
+rm -rf ${BACKUP_RW_MOUNT}/daily.3 ;
+fi
+
+### Shift the middle snapshots(s) back by one, if they exist
+if [ -d ${BACKUP_RW_MOUNT}/daily.2 ] ; then
+mv ${BACKUP_RW_MOUNT}/daily.2 ${BACKUP_RW_MOUNT}/daily.3 ;
+fi
+if [ -d ${BACKUP_RW_MOUNT}/daily.1 ] ; then
+mv ${BACKUP_RW_MOUNT}/daily.1 ${BACKUP_RW_MOUNT}/daily.2 ;
+fi
+if [ -d ${BACKUP_RW_MOUNT}/daily.0 ] ; then
+mv ${BACKUP_RW_MOUNT}/daily.0 ${BACKUP_RW_MOUNT}/daily.1 ;
+fi
+
+### Make backup of current (snapshot) volume
+#
+# This method creates hard-links to the previous backup for unchanged
+# files, saving considerable space.
+#
+rsync -a --delete --link-dest=${BACKUP_RW_MOUNT}/daily.1 \
+${SNAPSHOT_MOUNT}/ ${BACKUP_RW_MOUNT}/daily.0/
+
+### Update the mtime of daily.0 to reflect the snapshot time
+#
+touch ${BACKUP_RW_MOUNT}/daily.0 ;
+
+### Attempt to unmount the RW mount point
+#
+umount ${BACKUP_RW_MOUNT}
+rmdir ${BACKUP_RW_MOUNT}
+
+### Attempt to create the RO mount point
+#
+# This will only usually be necessary on the first run of this script.
+#
+if [ ! -d ${BACKUP_RO_MOUNT} ] ; then
+mkdir ${BACKUP_RO_MOUNT}
+fi
+
+### Attempt to mount the RO mount point
+#
+mount -o ro ${BACKUP_DEVICE} ${BACKUP_RO_MOUNT}
+
+### Unmount the snapshot
+#
+umount ${SNAPSHOT_MOUNT}
+rmdir ${SNAPSHOT_MOUNT}
+
+### Remove the snapshot volume
+#
+lvremove -f ${SNAPSHOT_DEVICE}

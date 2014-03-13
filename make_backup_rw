@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# This script makes the specified backup read-write
+
+BACKUP_VOLUME=$1
+BACKUP_MOUNT=$2
+BACKUP_DEVICE="${BACKUP_VOLUME}"
+BACKUP_RW_MOUNT="${BACKUP_MOUNT}/${BACKUP_VOLUME}_rw"
+BACKUP_RO_MOUNT="${BACKUP_MOUNT}/${BACKUP_VOLUME}"
+
+### Attempt to unmount the RO mount point
+#
+if [ -d ${BACKUP_RO_MOUNT} ] ; then
+umount ${BACKUP_RO_MOUNT}
+fi
+
+### Create the backup RW mount-point
+#
+if [ ! -d ${BACKUP_RW_MOUNT} ] ; then
+mkdir ${BACKUP_RW_MOUNT}
+fi
+
+### Protect the backup RW mount-point
+#
+chmod go-rwx ${BACKUP_RW_MOUNT}
+
+# Attempt to mount the RW mount point; else abort
+#
+mount -o rw ${BACKUP_DEVICE} ${BACKUP_RW_MOUNT}
+if (( $? )); then
+{
+	echo "Could not mount $BACKUP_DEVICE read-write" >&2;
+	exit 1;
+}
+fi

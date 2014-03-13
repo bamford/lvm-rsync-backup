@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# This script makes the specified backup read-only.
+
+BACKUP_VOLUME=$1
+BACKUP_MOUNT=$2
+BACKUP_DEVICE="${BACKUP_VOLUME}"
+BACKUP_RW_MOUNT="${BACKUP_MOUNT}/${BACKUP_VOLUME}_rw"
+BACKUP_RO_MOUNT="${BACKUP_MOUNT}/${BACKUP_VOLUME}"
+
+### Attempt to unmount the RW mount point
+#
+if [ -d ${BACKUP_RW_MOUNT} ] ; then
+umount ${BACKUP_RW_MOUNT}
+rmdir ${BACKUP_RW_MOUNT}
+fi
+
+### Attempt to mount the RO mount point
+#
+mount -o ro ${BACKUP_DEVICE} ${BACKUP_RO_MOUNT}

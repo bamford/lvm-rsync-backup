@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Perform weekly backup rotation for system volume backups
+
+/etc/backup/backup-weekly /dev/mapper/vg_system-lv_home /mnt/backup
+/etc/backup/backup-weekly /dev/mapper/vg_system-lv_root /mnt/backup
+/etc/backup/backup-weekly /dev/mapper/vg_system-lv_usr /mnt/backup
+/etc/backup/backup-weekly /dev/mapper/vg_system-lv_var /mnt/backup

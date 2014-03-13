@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Perform monthly backup rotation for system volume backups
+
+/etc/backup/backup-monthly /dev/mapper/vg_system-lv_home /mnt/backup
+/etc/backup/backup-monthly /dev/mapper/vg_system-lv_root /mnt/backup
+/etc/backup/backup-monthly /dev/mapper/vg_system-lv_usr /mnt/backup
+/etc/backup/backup-monthly /dev/mapper/vg_system-lv_var /mnt/backup
