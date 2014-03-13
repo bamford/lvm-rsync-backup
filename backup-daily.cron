@@ -10,7 +10,7 @@
 # automatically expand the backup volumes if instructed to here.
 # For now this must be done manually when necessary.
 
-/etc/backup/backup-daily /dev/mapper/vg_system-lv_home 64G 592M &> /var/log/backup-daily-home.log
-/etc/backup/backup-daily /dev/mapper/vg_system-lv_root 4G 256M &> /var/log/backup-daily-root.log
-/etc/backup/backup-daily /dev/mapper/vg_system-lv_usr 8G 592M &> /var/log/backup-daily-usr.log
-/etc/backup/backup-daily /dev/mapper/vg_system-lv_var 16G 592M &> /var/log/backup-daily-var.log
+/etc/backup/backup-daily /dev/mapper/vg_system-lv_home /mnt/backup 64G 592M &> /var/log/backup-daily-home.log
+/etc/backup/backup-daily /dev/mapper/vg_system-lv_root /mnt/backup 4G 256M &> /var/log/backup-daily-root.log
+/etc/backup/backup-daily /dev/mapper/vg_system-lv_usr /mnt/backup 8G 592M &> /var/log/backup-daily-usr.log
+/etc/backup/backup-daily /dev/mapper/vg_system-lv_var /mnt/backup 16G 592M &> /var/log/backup-daily-var.log
