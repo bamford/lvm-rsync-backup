@@ -21,7 +21,7 @@ buffer.  The backup size must be large enough to contain all the data
 in the logical volume to be backed up and any changes that may occur
 over the period that the backups are kept for.  The buffer size just
 needs to be large enough to contain any changes to the logical volume
-that is being backed up.
+that is being backed up while the backup is progressing.
 
 The main script is `backup-daily`:
 
