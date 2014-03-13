@@ -29,9 +29,9 @@ fi
 #
 # If the snapshot logical volume still exists, remove it
 #
-lvdisplay system | grep "LV Name" | grep -q /dev/system/system_var_snapshot
+lvdisplay | grep "LV Name" | grep -q ${SNAPSHOT_NAME}
 if [ $? = 0 ]; then
-lvremove -f ${SNAPSHOT_DEVICE}  
+lvremove -f ${SNAPSHOT_DEVICE}
 fi
 
 ### Create a logical volume to snapshot the system volume
@@ -48,7 +48,7 @@ fi
 # quiet times (early hours) and make sure this script completes
 # gracefully if a frozen snapshot is encountered.
 #
-lvcreate -L${BUFFER_SIZE} -s -n ${SNAPSHOT_NAME} /dev/system/${BACKUP_VOLUME}
+lvcreate -L${BUFFER_SIZE} -s -n ${SNAPSHOT_NAME} ${BACKUP_VOLUME}
 
 ### Create the backup logical volume
 #
