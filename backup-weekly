@@ -6,7 +6,9 @@
 cd $1
 
 ### Make backups writable
+if [ -d weekly.0 ] ; then
 chmod u+w weekly.*
+fi
 
 ### Delete the oldest weekly backup, if it exists
 #
@@ -34,4 +36,4 @@ fi
 ### Make backups write-protected
 chmod a-w weekly.*
 
-cd -
+cd - > /dev/null

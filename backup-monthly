@@ -6,7 +6,9 @@
 cd $1
 
 ### Make backups writable
+if [ -d monthly.0 ] ; then
 chmod u+w monthly.*
+fi
 
 ### Delete the oldest monthly backup, if it exists
 #
@@ -34,4 +36,4 @@ fi
 ### Make backups write-protected
 chmod a-w monthly.*
 
-cd -
+cd - > /dev/null

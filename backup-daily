@@ -9,7 +9,9 @@ TO_DIR=$2
 cd ${TO_DIR}
 
 ### Make backups writable
+if [ -d daily.0 ] ; then
 chmod u+w daily.*
+fi
 
 ### Delete the oldest daily backup, if it exists
 #
@@ -33,7 +35,7 @@ fi
 # This method creates hard-links to the previous backup for unchanged
 # files, saving considerable space.
 #
-rsync -a --delete --link-dest=daily.1 ${FROM_DIR}/ daily.0/
+rsync -a --delete --link-dest=${TO_DIR}/daily.1 ${FROM_DIR}/ daily.0/
 
 ### Update the mtime of daily.0 to reflect the snapshot time
 #
@@ -42,4 +44,4 @@ touch daily.0 ;
 ### Make backups write-protected
 chmod a-w daily.*
 
-cd -
+cd - > /dev/null
