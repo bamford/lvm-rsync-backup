@@ -3,35 +3,35 @@
 # This script rotates the oldest weekly backup
 # to monthly backup.
 
-BACKUP_VOLUME=$1
-BACKUP_MOUNT=$2
-BACKUP_DEVICE="${BACKUP_VOLUME}"
-BACKUP_RW_MOUNT="${BACKUP_MOUNT}/${BACKUP_VOLUME}_rw"
-BACKUP_RO_MOUNT="${BACKUP_MOUNT}/${BACKUP_VOLUME}"
+cd $1
 
-./make_backup_rw ${BACKUP_VOLUME} ${BACKUP_MOUNT} || exit 1
+### Make backups writable
+chmod u+w monthly.*
 
 ### Delete the oldest monthly backup, if it exists
 #
-if [ -d ${BACKUP_RW_MOUNT}/monthly.3 ] ; then
-rm -rf ${BACKUP_RW_MOUNT}/monthly.3
+if [ -d monthly.3 ] ; then
+rm -rf monthly.3
 fi
 
 ### Shift the middle snapshots(s) back by one, if they exist
-if [ -d ${BACKUP_RW_MOUNT}/monthly.2 ] ; then
-mv ${BACKUP_RW_MOUNT}/monthly.2 ${BACKUP_RW_MOUNT}/monthly.3 ;
+if [ -d monthly.2 ] ; then
+mv monthly.2 monthly.3 ;
 fi
-if [ -d ${BACKUP_RW_MOUNT}/monthly.1 ] ; then
-mv ${BACKUP_RW_MOUNT}/monthly.1 ${BACKUP_RW_MOUNT}/monthly.2 ;
+if [ -d monthly.1 ] ; then
+mv monthly.1 monthly.2 ;
 fi
-if [ -d ${BACKUP_RW_MOUNT}/monthly.0 ] ; then
-mv ${BACKUP_RW_MOUNT}/monthly.0 ${BACKUP_RW_MOUNT}/monthly.1 ;
+if [ -d monthly.0 ] ; then
+mv monthly.0 monthly.1 ;
 fi
 
 ### Hard link oldest weekly backup to monthly backup
 #
-if [ -d ${BACKUP_RW_MOUNT}/weekly.0 ] ; then
-cp -al ${BACKUP_RW_MOUNT}/weekly.0 ${BACKUP_RW_MOUNT}/monthly.0
+if [ -d weekly.3 ] ; then
+cp -al weekly.3 monthly.0
 fi
 
-./make_backup_ro ${BACKUP_VOLUME} ${BACKUP_MOUNT}
+### Make backups write-protected
+chmod a-w monthly.*
+
+cd -

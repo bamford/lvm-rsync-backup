@@ -2,10 +2,15 @@ lvm-rsync-backup
 ================
 
 Bash scripts for efficiently and (relatively) safely backing up a
-linux system using LVM snapshots and rsync.
+linux system using rsync.
 
-This produces a set of folders, each of which (apparently) contain a
-full copy of the backed-up filesystem at particualar times in the
+This branch does not use LVM.  LVM provides a bit more safety,
+especially for highly active systems, by ensuring files can't change
+as the backup progresses.  However, for many purposes this is not
+so much of an issue.
+
+These scripts produce a set of folders, each of which (apparently) contain
+a full copy of the backed-up filesystem at particualar times in the
 past.  In reality, the files are hardlinked, so they only take up the
 space of the oldest backup plus any changes made since.
 
@@ -15,24 +20,14 @@ your system.
 Usage
 -----
 
-You need LVM set up, with enough unallocated space in volume groups to
-create logical volumes for the backup and the temporary snapshop
-buffer.  The backup size must be large enough to contain all the data
-in the logical volume to be backed up and any changes that may occur
-over the period that the backups are kept for.  The buffer size just
-needs to be large enough to contain any changes to the logical volume
-that is being backed up while the backup is progressing.
-
 The main script is `backup-daily`:
 
-    backup-daily BACKUP_VOLUME BACKUP_MOUNT BACKUP_SIZE BUFFER_SIZE
+    backup-daily FROM_DIR TO_DIR
 
-For example, say you have a filesystem on the logical volume device
-`/dev/mapper/vg_system-lv_home` and you wish to create a backup
-mounted at `/mnt/backup` with 64Gb of backup space and 592Mb of buffer
-space, the command is:
+For example, to backup everything below `/home/username` to another
+physical volume mounted at `/mnt/backup` the command is:
 
-    backup-daily /dev/mapper/vg_system-lv_home /mnt/backup 64G 592M
+    backup-daily /home/username /mnt/backup
 
 The other scripts, `backup-weekly` and `backup-monthly`, simply delete
 the oldest backups and rename intermediate backups.

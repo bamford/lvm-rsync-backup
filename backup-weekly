@@ -3,35 +3,35 @@
 # This script rotates the oldest daily backup
 # to weekly backup.
 
-BACKUP_VOLUME=$1
-BACKUP_MOUNT=$2
-BACKUP_DEVICE="${BACKUP_VOLUME}"
-BACKUP_RW_MOUNT="${BACKUP_MOUNT}/${BACKUP_VOLUME}_rw"
-BACKUP_RO_MOUNT="${BACKUP_MOUNT}/${BACKUP_VOLUME}"
+cd $1
 
-./make_backup_rw ${BACKUP_VOLUME} ${BACKUP_MOUNT} || exit 1
+### Make backups writable
+chmod u+w weekly.*
 
 ### Delete the oldest weekly backup, if it exists
 #
-if [ -d ${BACKUP_RW_MOUNT}/weekly.3 ] ; then
-rm -rf ${BACKUP_RW_MOUNT}/weekly.3
+if [ -d weekly.3 ] ; then
+rm -rf weekly.3
 fi
 
 ### Shift the middle snapshots(s) back by one, if they exist
-if [ -d ${BACKUP_RW_MOUNT}/weekly.2 ] ; then
-mv ${BACKUP_RW_MOUNT}/weekly.2 ${BACKUP_RW_MOUNT}/weekly.3 ;
+if [ -d weekly.2 ] ; then
+mv weekly.2 weekly.3 ;
 fi
-if [ -d ${BACKUP_RW_MOUNT}/weekly.1 ] ; then
-mv ${BACKUP_RW_MOUNT}/weekly.1 ${BACKUP_RW_MOUNT}/weekly.2 ;
+if [ -d weekly.1 ] ; then
+mv weekly.1 weekly.2 ;
 fi
-if [ -d ${BACKUP_RW_MOUNT}/weekly.0 ] ; then
-mv ${BACKUP_RW_MOUNT}/weekly.0 ${BACKUP_RW_MOUNT}/weekly.1 ;
+if [ -d weekly.0 ] ; then
+mv weekly.0 weekly.1 ;
 fi
 
 ### Hard link oldest daily backup to weekly backup
 #
-if [ -d ${BACKUP_RW_MOUNT}/daily.3 ] ; then
-cp -al ${BACKUP_RW_MOUNT}/daily.3 ${BACKUP_RW_MOUNT}/weekly.0
+if [ -d daily.3 ] ; then
+cp -al daily.3 weekly.0
 fi
 
-./make_backup_ro ${BACKUP_VOLUME} ${BACKUP_MOUNT}
+### Make backups write-protected
+chmod a-w weekly.*
+
+cd -
