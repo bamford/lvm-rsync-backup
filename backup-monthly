@@ -31,7 +31,7 @@ fi
 ### Hard link oldest weekly backup to monthly backup
 #
 if [ -d ${BACKUP_RW_MOUNT}/weekly.0 ] ; then
-cp -al ${BACKUP_RW_MOUNT}/weekly.0 ${BACKUP_RW_MOUNT}/monthly.0
+cp -al ${BACKUP_RW_MOUNT}/weekly.3 ${BACKUP_RW_MOUNT}/monthly.0
 fi
 
 ./make_backup_ro ${BACKUP_VOLUME} ${BACKUP_MOUNT}
