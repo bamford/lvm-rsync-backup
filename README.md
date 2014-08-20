@@ -4,6 +4,8 @@ lvm-rsync-backup
 Bash scripts for efficiently and (relatively) safely backing up a
 linux system using LVM snapshots and rsync.
 
+See the no-lvm branch for a simpler version which does without LVM.
+
 This produces a set of folders, each of which (apparently) contain a
 full copy of the backed-up filesystem at particualar times in the
 past.  In reality, the files are hardlinked, so they only take up the
