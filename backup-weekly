@@ -13,6 +13,7 @@ fi
 ### Delete the oldest weekly backup, if it exists
 #
 if [ -d weekly.3 ] ; then
+chmod -R u+w weekly.3
 rm -rf weekly.3
 fi
 

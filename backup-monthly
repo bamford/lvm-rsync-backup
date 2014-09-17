@@ -13,6 +13,7 @@ fi
 ### Delete the oldest monthly backup, if it exists
 #
 if [ -d monthly.3 ] ; then
+chmod -R u+w monthly.3
 rm -rf monthly.3
 fi
 

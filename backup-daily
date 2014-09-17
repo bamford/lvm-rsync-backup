@@ -16,6 +16,7 @@ fi
 ### Delete the oldest daily backup, if it exists
 #
 if [ -d daily.3 ] ; then
+chmod -R u+w daily.3
 rm -rf daily.3 ;
 fi
 
