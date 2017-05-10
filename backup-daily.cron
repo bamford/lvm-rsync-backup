@@ -2,4 +2,4 @@
 
 # Perform daily backups of system volumes
 
-/etc/backup/backup-daily /home/ppzsb1 /data2/backup/home &> /data2/backup/logs/backup-daily-home.log
+~ppzsb1/backup/backup-daily pppzsb2:projects ~/backup/projects &> ~/backup/backup-daily-projects.log

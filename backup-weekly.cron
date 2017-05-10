@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# Perform weekly backup rotation for system volume backups
+# Perform weekly backup rotation
 
-/etc/backup/backup-weekly /data2/backup/home
+/etc/backup/backup-weekly ~/backup/projects

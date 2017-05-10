@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# Perform monthly backup rotation for system volume backups
+# Perform monthly backup rotation
 
-/etc/backup/backup-monthly /data2/backup/home
+/etc/backup/backup-monthly ~/backup/projects
