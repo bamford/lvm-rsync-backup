@@ -1,11 +1,13 @@
-lvm-rsync-backup
-================
+Remote Linux 'Time Machine' backups
+===================================
 
 Bash scripts for efficiently and (relatively) safely backing up a
 linux system using rsync.
 
-This branch is a customised example for the Nottingham Astronomy 
-`captain` system, although it would equally apply to most modern servers.
+This branch is a customised example for Nottingham astronomers to back
+up folders from their desktop system to the `captain` server, although
+it would equally apply to most modern servers.  It can also be adapted to
+backup from one disk to another on the same machine (see the other branches).
 
 These scripts produce a set of folders, each of which (apparently)
 contain a full copy of the backed-up filesystem at particualar times
