@@ -2,4 +2,4 @@
 
 # Perform monthly backup rotation
 
-/etc/backup/backup-monthly ~/backup/projects
+~/backup/bin/backup-monthly ~/backup/projects

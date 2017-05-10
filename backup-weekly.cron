@@ -2,4 +2,4 @@
 
 # Perform weekly backup rotation
 
-/etc/backup/backup-weekly ~/backup/projects
+~/backup/bin/backup-weekly ~/backup/projects

@@ -1,5 +1,8 @@
 #!/bin/bash
 
-# Perform daily backups of system volumes
+# Perform daily backups
 
-~ppzsb1/backup/backup-daily pppzsb2:projects ~/backup/projects &> ~/backup/backup-daily-projects.log
+# Add lines with the following format:
+# ~/backup/bin/backup-daily machine:path ~/backups/name &> ~/backup/backup-daily-name.log
+
+~/backup/bin/backup-daily pppzsb2:projects ~/backup/projects &> ~/backup/backup-daily-projects.log
