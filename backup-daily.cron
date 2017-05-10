@@ -5,4 +5,10 @@
 # Add lines with the following format:
 # ~/backup/bin/backup-daily machine:path ~/backups/name &> ~/backup/backup-daily-name.log
 
+# e.g., your entire home folder:
+# ~/backup/bin/backup-daily pppzsb2: ~/backup/home &> ~/backup/backup-daily-home.log
+
+# e.g., a specific folder:
 ~/backup/bin/backup-daily pppzsb2:projects ~/backup/projects &> ~/backup/backup-daily-projects.log
+
+# You can include multiple lines to backup different folders and machines
