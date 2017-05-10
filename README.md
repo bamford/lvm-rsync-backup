@@ -19,9 +19,11 @@ therefore behaves similarly to OSX Time Machine.
 Usage
 -----
 
-First ssh to captain (you may need to enter your password):
+First ssh to `captain` (you may need to enter your password):
 
     ssh captain
+
+All the following should be performed on `captain`, not your desktop machine.
 
 If you haven't already got an ssh key on captain, create one:
 
