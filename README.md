@@ -2,7 +2,7 @@ Remote Linux 'Time Machine' backups
 ===================================
 
 Bash scripts for efficiently and (relatively) safely backing up a
-linux system using rsync.
+Linux system using rsync.
 
 This branch is a customised example for Nottingham astronomers to back
 up folders from their desktop system to the `captain` server, although
@@ -10,7 +10,7 @@ it would equally apply to most modern servers.  It can also be adapted to
 backup from one disk to another on the same machine (see the other branches).
 
 These scripts produce a set of folders, each of which (apparently)
-contain a full copy of the backed-up filesystem at particualar times
+contain a full copy of the backed-up filesystem at particular times
 in the past.  In reality, the files are hardlinked, so they only take
 up the space of the oldest backup plus any changes made since.  It
 therefore behaves similarly to OSX Time Machine.
@@ -55,7 +55,7 @@ Run the daily script to perform the first backup and check it is working.  This 
 
 This should produce a folder `daily.0`.
 
-If everything looks ok, add these scripts to your cron table.  Here we pick some random times in the evening to avoid all the backups occuring at the same time:
+If everything looks ok, add these scripts to your cron table.  Here we pick some random times in the evening to avoid all the backups occurring at the same time:
 
     min=`shuf -i 0-59 -n1`
     daily_hour=`shuf -i 21-23 -n1`
