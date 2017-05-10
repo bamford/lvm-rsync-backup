@@ -45,25 +45,11 @@ Edit the `backup-daily.cron` script so it contains the correct machine, folder a
 
 Edit the `backup-weekly.cron` and `backup-monthly.cron` scripts to match.
 
-Run the set of scripts to perform the first backup and check they are working.  This may take a while if you have a lot of data to backup.
+Run the daily script to perform the first backup and check it is working.  This may take a while if you have a lot of data to backup (subsequent backups will typically be much faster).
 
     ~/backup/bin/backup-daily.cron
 
-    ~/backup/bin/backup-weekly.cron
-
-    ~/backup/bin/backup-monthly.cron
-
-You should now have folders `daily.0`, `weekly.0`, `monthly.0`.  Running `ls -l` will show you the backup date and time of each.  If you navigate into one, you should see the entire folder as it was at the time of the backup.
-
-Run them again:
-
-    ~/backup/bin/backup-daily.cron
-
-    ~/backup/bin/backup-weekly.cron
-
-    ~/backup/bin/backup-monthly.cron
-
-Now you should also have folders `daily.1`, `weekly.1`, `monthly.1`.  The scripts will maintain daily snapshots for the past four days, weekly snapshots for the past four weeks, and monthly snapshots for the past four months. 
+This should produce a folder `daily.0`.
 
 If everything looks ok, add these scripts to your cron table.  Here we pick some random times in the evening to avoid all the backups occuring at the same time:
 
@@ -73,8 +59,20 @@ If everything looks ok, add these scripts to your cron table.  Here we pick some
     monthly_hour=$(( $(( $weekly_hour + 1 )) % 24 ))
     crontab -l > crontab.backup
     echo "$min $daily_hour * * * $HOME/backup/bin/backup-daily.cron &> /dev/null" >> crontab.backup
-    echo "$min $weekly_hour * * * $HOME/backup/bin/backup-weekly.cron &> /dev/null" >> crontab.backup
-    echo "$min $monthly_hour * * * $HOME/backup/bin/backup-weekly.cron &> /dev/null" >> crontab.backup
+    echo "$min $weekly_hour * * 6 $HOME/backup/bin/backup-weekly.cron &> /dev/null" >> crontab.backup
+    echo "$min $monthly_hour 1 * * $HOME/backup/bin/backup-weekly.cron &> /dev/null" >> crontab.backup
     crontab crontab.backup
 
-And you're done!
+The scripts will now run automatically to maintain daily snapshots for
+the past four days (`daily.{0,1,2,3}`), weekly snapshots for the past
+four weeks (`weekly.{0,1,2,3}`), and monthly snapshots for the past
+four months (`monthly.{0,1,2,3}`). Adapt the scripts if you want a
+different arrangement. Each of these folders contains a snapshot of
+the target folder as it was at the time of the backup. Running `ls -l`
+will show you the backup date and time of each folder and the files
+within.
+
+That's it!  Check back occasionally to make sure the full set of
+folders appears.  If you ever need to recover a file or folder from a
+day, week or month ago, just find it in the appropriate folder and
+copy (or rsync) it where you want it.
